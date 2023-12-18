@@ -1,8 +1,9 @@
-# library/models.py
-
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.forms import forms
+from django.contrib.auth.models import AbstractUser
+
+
 
 class Author(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя', blank=False)
@@ -17,6 +18,7 @@ class Author(models.Model):
         unique_together = ('name', 'lastName', 'middle_name', 'dateOfBirth')
         verbose_name = 'Автор'
         verbose_name_plural = 'Авторы'
+
 
 class Cover(models.Model):
     def validate_image(value):
@@ -41,10 +43,14 @@ class Book(models.Model):
     photoPreview = models.ImageField(upload_to='cover', verbose_name='Изображения', blank=False, null=True)
     bookFile = models.FileField(upload_to='books', verbose_name='Файл с книгой', blank=False, null=True)
 
+
     def validate_image(value):
         size_limit = 2 * 1024 * 1024
         if value.size > size_limit:
             raise forms.ValidationError('Файл слишком большой. Размер файла не должен превышать 2MB')
+
+    photoPreview = models.ImageField(validators=[validate_image], upload_to='cover', verbose_name='Изображения', blank=False, null=True)
+    bookFile = models.FileField(upload_to='books', verbose_name='Файл с книгой', blank=False, null=True)
 
     class Meta:
         unique_together = ('title', 'author', 'yearOfRel', 'publisher')
