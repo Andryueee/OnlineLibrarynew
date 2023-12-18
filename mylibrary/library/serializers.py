@@ -1,10 +1,4 @@
-# library/serializers.py
-
-from rest_framework import serializers
 from .models import Author, Book, Cover
-from rest_framework import serializers
-from .models import Book
-from rest_framework import serializers
 from .models import Author
 from rest_framework import serializers
 from .models import Book

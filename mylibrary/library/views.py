@@ -8,7 +8,20 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import BookCreateSerializer
 from .permissions import is_admin
+from django.db.models import Q
 
+class BookSearchView(generics.ListAPIView):
+    serializer_class = BookDetailSerializer
+
+    def get_queryset(self):
+        query = self.request.query_params.get('query', '')
+        return Book.objects.filter(
+            Q(title__icontains=query) |  # Поиск по названию
+            Q(genre__icontains=query) |  # Поиск по жанру
+            Q(author__name__icontains=query) |  # Поиск по имени автора
+            Q(author__lastName__icontains=query) |  # Поиск по отчеству автора
+            Q(author__middle_name__icontains=query)  # Поиск по фамилии автора
+        )
 
 class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
